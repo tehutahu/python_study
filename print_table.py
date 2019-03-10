@@ -20,10 +20,11 @@ def print_table(table):
         print()
 
 def max_length(ls):
-    tmp = []
+    M = 0
     for i in ls:
-        tmp.append(len(i))
-    return max(tmp)
+        if len(i) > M:
+            M = len(i)
+    return M
 
 if __name__ == '__main__':
     print_table(table_data)
