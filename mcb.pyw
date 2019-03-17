@@ -5,37 +5,45 @@ import sys, pyperclip
 import shelve
 
 # keyword
-keywords = ['save', 'list']
+keywords = ['save', 'list', 'delete']
 
 usage = r'''Usage: python mcb.pyw [command] [key]
             [command]: 'save' or 'list'
-            [key]: the key chained with clipboard'''
+            [key]: the key chained with clipboard
+            [delete] delete the key and values'''
 
 def mcb(command):
+    mcb_shelve = shelve.open('mcb')
+
     # restore to clipboard
     if len(command) < 2:
-        shelve_mcb = shelve.open('mcb')
-        if command[0] in list(shelve_mcb.keys()):
-            pyperclip.copy(shelve_mcb[command[0]])
+        if command[0] in list(mcb_shelve.keys()):
+            pyperclip.copy(mcb_shelve[command[0]])
             print('Copy the \'{}\' to clipboard'.format(command[0]))
         else:
             print('Key \'{}\' is not found'.format(command[0]))
-        shelve_mcb.close()
+
     # save to list from clipboard
     elif command[0].lower() == keywords[0]:
-        shelve_mcb = shelve.open('mcb')
-        shelve_mcb[command[1]] = pyperclip.paste()
-        shelve_mcb.close
+        mcb_shelve[command[1]] = pyperclip.paste()
         print('Save to list from clipboard')
     # display list
     elif command[0].lower() == keywords[1]:
-        shelve_mcb = shelve.open('mcb')
-        pyperclip.copy('\n'.join(list(shelve_mcb.keys())))
-        for key, value in list(shelve_mcb.items()):
+        pyperclip.copy('\n'.join(list(mcb_shelve.keys())))
+        for key, value in list(mcb_shelve.items()):
             print('key: {}, value: {}'.format(key, value))
-        shelve_mcb.close
+        # delete the key and value
+    elif command[0].lower() == keywords[2]:
+        if command[1].lower() == 'all':
+            for key in mcb_shelve:
+                del mcb_shelve[key]
+        else:
+            del mcb_shelve[command[1]]
+    # default
     else:
         print(usage)
+
+    mcb_shelve.close()
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
@@ -44,5 +52,7 @@ if __name__ == '__main__':
         mcb([keywords[0], sys.argv[2]])
     elif sys.argv[1].lower() == keywords[1]:
         mcb([keywords[1], ''])
+    elif sys.argv[1].lower() == keywords[2]:
+        mcb([keywords[2], sys.argv[2]])
     else:
         mcb([sys.argv[1]])
