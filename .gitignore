@@ -4,3 +4,7 @@
 *.dir
 *.bak
 *.dat
+
+#
+hello.txt
+hello_repl.txt
