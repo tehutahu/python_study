@@ -11,6 +11,7 @@ adj_regex = re.compile(r'ADJECTIVE.*?')
 noun_regex = re.compile(r'NOUN.*?')
 adv_regex = re.compile(r'ADVERBE.*?')
 ver_regex = re.compile(r'VERB.*?')
+all_regex = re.compile(r'ADJECTIVE.*?|NOUN.*?|ADVERBE.*?|VERB.*?')
 
 regex_list = [adj_regex, noun_regex, adv_regex, ver_regex]
 
@@ -25,6 +26,11 @@ def compositionGenerator(path):
         text = f.read()
 
     # replace
+    match = all_regex.findall(text)
+
+    for i in range(len(match)):
+
+
     for i in range(len(regex_list)):
         repl = input('Enter {}:\n'.format(['an adjective', 'a noun', 'an adverb', 'a verb'][i]))
         text = regex_list[i].sub(repl, text)
